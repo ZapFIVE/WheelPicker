@@ -1,0 +1,203 @@
+package com.zap.picker;
+
+import android.app.Activity;
+import android.text.TextUtils;
+import android.util.SparseArray;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * 双项选择器，遮罩可选，label可选，联动可选
+ * <p>
+ * Created by Will on 2016/10/14.
+ */
+public class DoublePicker extends WheelPicker {
+
+    private String firstLabel = "", secondLabel = "";
+    private String firstSelectValue = "", secondSelectValue = "";
+    private int textLabelSize = textNormalSize;
+    private int textLabelColor = 0xFFFFFFFF;
+    private List<String> firstList = null, secondList = null;
+    private OnDoublePickListener onDoublePickListener;//确认监听
+    private boolean isSupportRelevance = false;//是否支持联动
+    private SparseArray<List<String>> relevanceRule = null;//联动规则
+    private RelevanceType relevanceType = RelevanceType.BACK_TO_TOP;
+
+    public DoublePicker(Activity activity) {
+        super(activity);
+        this.firstSelectValue = StringHelper.getCurrHour();
+        this.secondSelectValue = StringHelper.getCurrMinute();
+        firstList = new ArrayList<>();
+        secondList = new ArrayList<>();
+
+        for (int i = 0; i < 24; i++) {
+            firstList.add(String.format(Locale.getDefault(), "%02d", i));
+        }
+        for (int i = 0; i < 60; i++) {
+            secondList.add(String.format(Locale.getDefault(), "%02d", i));
+        }
+    }
+
+    @Override
+    protected View initContentView() {
+        /** 根部局 **/
+        LinearLayout rootView = new LinearLayout(activity);
+        rootView.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        rootView.setOrientation(LinearLayout.HORIZONTAL);
+        rootView.setGravity(Gravity.CENTER);
+
+        /** 左边LayoutParams **/
+        LinearLayout layout_1 = new LinearLayout(activity);
+        LinearLayout.LayoutParams params_1 = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 1);
+        layout_1.setLayoutParams(params_1);
+        layout_1.setGravity(Gravity.CENTER);
+        /** 左边WheelView **/
+        WheelView firstWheel = new WheelView(activity);
+        firstWheel.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+        firstWheel.setTextSize(textNormalSize, textSelectSize);
+        firstWheel.setTextColor(textNormalColor, textSelectColor);
+        firstWheel.setOffSet(offSet);
+        firstWheel.setMaskColor(maskColor);
+        firstWheel.setMaskVisible(isMaskVisible);
+        layout_1.addView(firstWheel);
+        rootView.addView(layout_1);
+        /** 左边Label **/
+        if (!TextUtils.isEmpty(firstLabel)) {
+            TextView tv = new TextView(activity);
+            tv.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+            tv.setTextColor(textLabelColor);
+            tv.setTextSize(textLabelSize);
+            tv.setPadding(20, 0, 0, 0);
+            tv.setText(firstLabel);
+            rootView.addView(tv);
+        }
+        /** 右边LayoutParams **/
+        LinearLayout layout_2 = new LinearLayout(activity);
+        LinearLayout.LayoutParams params_2 = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 1);
+        layout_2.setLayoutParams(params_2);
+        layout_2.setGravity(Gravity.CENTER);
+        /** 右边WheelView **/
+        final WheelView secondWheel = new WheelView(activity);
+        secondWheel.setLayoutParams(params_1);
+        secondWheel.setTextSize(textNormalSize, textSelectSize);
+        secondWheel.setTextColor(textNormalColor, textSelectColor);
+        secondWheel.setOffSet(offSet);
+        secondWheel.setMaskColor(maskColor);
+        secondWheel.setMaskVisible(isMaskVisible);
+        layout_2.addView(secondWheel);
+        rootView.addView(layout_2);
+        /** 右边Label **/
+        if (!TextUtils.isEmpty(secondLabel)) {
+            TextView tv = new TextView(activity);
+            tv.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+            tv.setTextColor(textLabelColor);
+            tv.setTextSize(textLabelSize);
+            tv.setPadding(20, 0, 20, 0);
+            tv.setText(secondLabel);
+            rootView.addView(tv);
+        }
+
+        firstWheel.setItemList(firstList, firstSelectValue);
+        /** 如果设置了联动效果，添加联动集和默认选择值**/
+        if (isSupportRelevance && relevanceRule != null && relevanceRule.size() > 0) {
+            secondSelectValue = relevanceRule.get(0).get(0);
+            secondList = relevanceRule.get(0);
+        }
+        secondWheel.setItemList(secondList, secondSelectValue);
+
+        firstWheel.setOnWheelViewListener(new WheelView.OnWheelViewListener() {
+            @Override
+            public void onSelected(boolean isUserScroll, int selectedIndex, String item) {
+                firstSelectValue = item;
+                if (isSupportRelevance) {
+                    if (relevanceRule != null && relevanceRule.size() > 0) {
+                        if (relevanceType == RelevanceType.BACK_TO_TOP) {
+                            secondWheel.setItemList(relevanceRule.get(selectedIndex - offSet), 0);
+                        } else if (relevanceType == RelevanceType.STAY_IN_PLACE) {
+                            secondWheel.setItemList(relevanceRule.get(selectedIndex - offSet), secondWheel.getSelectedIndex());
+                        }
+
+                    } else {
+                        throw new IllegalArgumentException("Current RelevanceRule is null or size is 0");
+                    }
+                }
+            }
+        });
+        secondWheel.setOnWheelViewListener(new WheelView.OnWheelViewListener() {
+            @Override
+            public void onSelected(boolean isUserScroll, int selectedIndex, String item) {
+                secondSelectValue = item;
+            }
+        });
+
+        return rootView;
+    }
+
+    @Override
+    protected void setContentViewAfter(View contentView) {
+        super.setContentViewAfter(contentView);
+        super.setOnConfirmListener(new OnConfirmListener() {
+            @Override
+            public void onConfirm() {
+                if (onDoublePickListener != null) {
+                    onDoublePickListener.onDoublePicked(firstSelectValue, secondSelectValue);
+                }
+            }
+        });
+    }
+
+    public void setLabel(String firstLabel, String secondLabel) {
+        this.firstLabel = firstLabel;
+        this.secondLabel = secondLabel;
+    }
+
+    public void setSecletedItem(String firstValue, String secondValue) {
+        this.firstSelectValue = firstValue;
+        this.secondSelectValue = secondValue;
+    }
+
+    public void setItemList(List<String> firstList, List<String> secondList) {
+        this.firstList = firstList;
+        this.secondList = secondList;
+    }
+
+    public void setFirstItemList(List<String> firstList) {
+        this.firstList = firstList;
+    }
+
+    public void setOnDoublePickListener(OnDoublePickListener listener) {
+        this.onDoublePickListener = listener;
+    }
+
+    public void setSupportRelevance(boolean isSupportRelevance) {
+        this.isSupportRelevance = isSupportRelevance;
+    }
+
+    public void setRelevanceRule(SparseArray<List<String>> rules) {
+        this.relevanceRule = rules;
+    }
+
+    public void setTextLabelColor(int textLabelColor) {
+        this.textLabelColor = textLabelColor;
+    }
+
+    public void setTextLabelSize(int textLabelSize) {
+        this.textLabelSize = textLabelSize;
+    }
+
+    public void setRelevanceType(RelevanceType relevanceType) {
+        this.relevanceType = relevanceType;
+    }
+
+    public interface OnDoublePickListener {
+        void onDoublePicked(String firstSelectValue, String secondSelectValue);
+    }
+
+
+}
