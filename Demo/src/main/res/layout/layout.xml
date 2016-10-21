@@ -2,25 +2,120 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="singleOnClick"
-        android:text="SingleShow" />
+        android:gravity="center"
+        android:orientation="horizontal">
 
-    <Button
-        android:layout_width="wrap_content"
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="singleOnClick"
+            android:text="单项弹窗" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="doubleOnClick"
+            android:text="两项弹窗" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="threeOnClick"
+            android:text="三项弹窗" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="doubleOnClick"
-        android:text="DoubleShow" />
+        android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="threeOnClick"
-        android:text="ThreeShow" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
+            <com.zap.picker.SingleLayout
+                android:id="@+id/singleLayout"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:background="#191923"
+                android:visibility="visible" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_result_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="则1点"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_result_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00时00分"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tv_result_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00时00分00秒"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="#191923"
+            android:visibility="visible">
+
+            <com.zap.picker.DoubleLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/doubleLayout"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="#191923"
+                app:first_label=":"
+                app:label_padding="40dp"
+                app:mask_visible="false"
+                app:relevance_type="back_to_top" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="#191923">
+
+            <com.zap.picker.ThreeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/threeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="#191923"
+                app:first_label="时"
+                app:label_padding="10dp"
+                app:mask_visible="false"
+                app:relevance_type="stay_in_place"
+                app:second_label="分"
+                app:three_label="秒" />
+        </FrameLayout>
+    </LinearLayout>
 </LinearLayout>

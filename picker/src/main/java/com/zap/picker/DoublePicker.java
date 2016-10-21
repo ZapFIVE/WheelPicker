@@ -8,6 +8,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.zap.picker.base.WheelPicker;
+import com.zap.picker.base.WheelView;
+import com.zap.picker.utils.RelevanceType;
+import com.zap.picker.utils.StringHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -21,8 +26,6 @@ public class DoublePicker extends WheelPicker {
 
     private String firstLabel = "", secondLabel = "";
     private String firstSelectValue = "", secondSelectValue = "";
-    private int textLabelSize = textNormalSize;
-    private int textLabelColor = 0xFFFFFFFF;
     private List<String> firstList = null, secondList = null;
     private OnDoublePickListener onDoublePickListener;//确认监听
     private boolean isSupportRelevance = false;//是否支持联动
@@ -68,15 +71,17 @@ public class DoublePicker extends WheelPicker {
         layout_1.addView(firstWheel);
         rootView.addView(layout_1);
         /** 左边Label **/
+
+        TextView tv_1 = new TextView(activity);
+        tv_1.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+        tv_1.setTextColor(labelColor);
+        tv_1.setTextSize(labelSize);
+        tv_1.setText(firstLabel);
         if (!TextUtils.isEmpty(firstLabel)) {
-            TextView tv = new TextView(activity);
-            tv.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-            tv.setTextColor(textLabelColor);
-            tv.setTextSize(textLabelSize);
-            tv.setPadding(20, 0, 0, 0);
-            tv.setText(firstLabel);
-            rootView.addView(tv);
+            tv_1.setPadding(labelPadding, 0, labelPadding, 0);
         }
+        rootView.addView(tv_1);
+
         /** 右边LayoutParams **/
         LinearLayout layout_2 = new LinearLayout(activity);
         LinearLayout.LayoutParams params_2 = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 1);
@@ -93,15 +98,17 @@ public class DoublePicker extends WheelPicker {
         layout_2.addView(secondWheel);
         rootView.addView(layout_2);
         /** 右边Label **/
+
+        TextView tv_2 = new TextView(activity);
+        tv_2.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+        tv_2.setTextColor(labelColor);
+        tv_2.setTextSize(labelSize);
+        tv_2.setText(secondLabel);
         if (!TextUtils.isEmpty(secondLabel)) {
-            TextView tv = new TextView(activity);
-            tv.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-            tv.setTextColor(textLabelColor);
-            tv.setTextSize(textLabelSize);
-            tv.setPadding(20, 0, 20, 0);
-            tv.setText(secondLabel);
-            rootView.addView(tv);
+            tv_2.setPadding(labelPadding, 0, 0, 0);
         }
+        rootView.addView(tv_2);
+
 
         firstWheel.setItemList(firstList, firstSelectValue);
         /** 如果设置了联动效果，添加联动集和默认选择值**/
@@ -122,7 +129,6 @@ public class DoublePicker extends WheelPicker {
                         } else if (relevanceType == RelevanceType.STAY_IN_PLACE) {
                             secondWheel.setItemList(relevanceRule.get(selectedIndex - offSet), secondWheel.getSelectedIndex());
                         }
-
                     } else {
                         throw new IllegalArgumentException("Current RelevanceRule is null or size is 0");
                     }
@@ -146,7 +152,7 @@ public class DoublePicker extends WheelPicker {
             @Override
             public void onConfirm() {
                 if (onDoublePickListener != null) {
-                    onDoublePickListener.onDoublePicked(firstSelectValue, secondSelectValue);
+                    onDoublePickListener.onSelected(firstSelectValue, secondSelectValue);
                 }
             }
         });
@@ -183,20 +189,12 @@ public class DoublePicker extends WheelPicker {
         this.relevanceRule = rules;
     }
 
-    public void setTextLabelColor(int textLabelColor) {
-        this.textLabelColor = textLabelColor;
-    }
-
-    public void setTextLabelSize(int textLabelSize) {
-        this.textLabelSize = textLabelSize;
-    }
-
     public void setRelevanceType(RelevanceType relevanceType) {
         this.relevanceType = relevanceType;
     }
 
     public interface OnDoublePickListener {
-        void onDoublePicked(String firstSelectValue, String secondSelectValue);
+        void onSelected(String firstSelectValue, String secondSelectValue);
     }
 
 

@@ -1,4 +1,4 @@
-package com.zap.picker;
+package com.zap.picker.base;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.zap.picker.R;
+import com.zap.picker.utils.ScreenHelper;
 
 /**
  * CommonPopup通用弹窗

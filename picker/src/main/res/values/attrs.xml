@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="WheelLayout">
+        <attr name="normal_size" format="dimension" />
+        <attr name="select_size" format="dimension" />
+        <attr name="normal_color" format="color" />
+        <attr name="select_color" format="color" />
+        <attr name="label_size" format="dimension" />
+        <attr name="label_color" format="dimension" />
+        <attr name="mask_Color" format="color" />
+        <attr name="mask_visible" format="boolean" />
+        <attr name="offSet" format="integer" />
+        <attr name="first_label" format="string" />
+        <attr name="second_label" format="string" />
+        <attr name="three_label" format="string" />
+        <attr name="label_padding" format="dimension" />
+        <attr name="relevance_type" format="enum">
+            <enum name="back_to_top" value="0" />
+            <enum name="stay_in_place" value="1" />
+        </attr>
+    </declare-styleable>
+
+</resources>

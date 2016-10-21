@@ -1,4 +1,4 @@
-package com.zap.picker;
+package com.zap.picker.utils;
 
 import android.content.Context;
 import android.util.DisplayMetrics;

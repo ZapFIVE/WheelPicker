@@ -1,4 +1,4 @@
-package com.zap.picker;
+package com.zap.picker.base;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,13 +11,13 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.zap.picker.utils.ScreenHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
 public class WheelView extends ScrollView {
 
     public static final int TEXT_NORMAL_SIZE = 20;
-    public static final int TEXT_SELECT_SIZE = 25;
+    public static final int TEXT_SELECT_SIZE = 28;
     public static final int TEXT_NORMAL_COLOR = 0x7FFFFFFF;
     public static final int TEXT_SELECT_COLOR = 0XFF7D55FF;
     public static final int MASK_COLOR = 0xFFC0C0C0;
@@ -99,6 +99,7 @@ public class WheelView extends ScrollView {
         setVerticalScrollBarEnabled(false);
 
         views = new LinearLayout(context);
+        views.setLayoutParams(new LayoutParams(BottomPopup.MATCH_PARENT, BottomPopup.WRAP_CONTENT));
         views.setOrientation(LinearLayout.VERTICAL);
         addView(views);
     }
@@ -141,7 +142,6 @@ public class WheelView extends ScrollView {
         };
 
         super.setBackground(background);
-
     }
 
     @Override
@@ -185,7 +185,10 @@ public class WheelView extends ScrollView {
      *
      * @param v 指定的TextView
      */
-    private void getViewMeasured(View v) {
+    private void getViewMeasured(TextView v) {
+//        TextPaint textPaint = v.getPaint();
+//        int width = MeasureSpec.makeMeasureSpec((int) textPaint.measureText(text), MeasureSpec.AT_MOST);
+
         int width = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
         int expandSpecHeight = MeasureSpec.makeMeasureSpec(defaultTextHeight, MeasureSpec.EXACTLY);
         v.measure(width, expandSpecHeight);
@@ -216,7 +219,6 @@ public class WheelView extends ScrollView {
         tv.setPadding(padding, padding, padding, padding);
 
         getViewMeasured(tv);
-
         return tv;
     }
 
@@ -243,10 +245,7 @@ public class WheelView extends ScrollView {
         for (String item : items) {
             views.addView(createTextView(item));
         }
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) this.getLayoutParams();
-        itemWidth = Math.max(lp.width, itemWidth);//保持当前View大小适中，最终由外层父Layout决定ScrollView的宽度
-        views.setLayoutParams(new LayoutParams(itemWidth, itemHeight * showItemCount));
-        this.setLayoutParams(new LinearLayout.LayoutParams(BottomPopup.WRAP_CONTENT, itemHeight * showItemCount));
+        this.setLayoutParams(new LinearLayout.LayoutParams(BottomPopup.MATCH_PARENT, itemHeight * showItemCount));
 
         /** 刷新当前显示 **/
         refreshItemView(getScrollY());
@@ -262,7 +261,7 @@ public class WheelView extends ScrollView {
         post(new Runnable() {
             @Override
             public void run() {
-                smoothScrollTo(0, index * itemHeight);
+                scrollTo(0, index * itemHeight);
 
                 selectedIndex = index + offSet;
 
@@ -276,7 +275,7 @@ public class WheelView extends ScrollView {
      *
      * @param text 被选中的文本
      */
-    private void setSelectedItem(String text) {
+    public void setSelectedItem(String text) {
         for (int i = 0; i < items.size(); i++) {
             if (text.equals(items.get(i))) {
                 setSelectedIndex(i - offSet);
@@ -302,6 +301,11 @@ public class WheelView extends ScrollView {
     public void setItemList(List<String> list, int index) {
         initData(list);
 
+        /** 防止保留上次位置时，保留的位置超出更新的list的总长度 **/
+        if (index > list.size() - 1) {
+            index = list.size() - 1;
+        }
+
         setSelectedIndex(index);
     }
 
@@ -325,7 +329,10 @@ public class WheelView extends ScrollView {
         postDelayed(scrollTask, POST_DELAY);
     }
 
-    private void refreshItemView1(int y) {
+    /**
+     * 后期版本为了实现，字体颜色和大小根据滑动距离渐变效果
+     */
+    private void refreshItemViewText(int y) {
         y += itemHeight * offSet;
 
         int remainder = y % itemHeight;
@@ -333,7 +340,6 @@ public class WheelView extends ScrollView {
 
         for (int i = 0; i < views.getChildCount(); i++) {
             TextView tv = (TextView) views.getChildAt(i);
-            Log.e("getChildCount", "remainder  " + remainder);
             if (tv.getY() == (y - remainder) && (remainder <= itemHeight / 2)) {
                 tv.setTextSize(textSelectSize - (dTextSize * remainder / itemHeight));
                 tv.setTextColor(textSelectColor);

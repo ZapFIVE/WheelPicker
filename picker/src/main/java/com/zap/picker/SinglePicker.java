@@ -1,11 +1,16 @@
 package com.zap.picker;
 
 import android.app.Activity;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.zap.picker.base.WheelPicker;
+import com.zap.picker.base.WheelView;
+import com.zap.picker.utils.ScreenHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,11 +23,9 @@ import java.util.List;
  */
 public class SinglePicker extends WheelPicker {
 
-    protected List<String> items = new ArrayList<>();
+    private List<String> items = new ArrayList<>();
     private OnSinglePickListener onSinglePickListener;
     private String label = "";
-    private int textLabelSize = textNormalSize;
-    private int textLabelColor = 0xFFFFFFFF;
     private String selectedText = "";
 
     public SinglePicker(Activity activity, String[] itemsString) {
@@ -41,6 +44,27 @@ public class SinglePicker extends WheelPicker {
         }
     }
 
+    /**
+     * 获取WheelView可提供的最大宽度
+     */
+    private int getViewWidth() {
+        int textWidth = 0;
+        TextView tv = new TextView(activity);
+        tv.setSingleLine(true);
+        tv.setTextSize(textSelectSize);
+        TextPaint textPaint = tv.getPaint();
+        for (String item : items) {
+            if (textWidth < textPaint.measureText(item)) {
+                textWidth = (int) textPaint.measureText(item) + 2 * labelPadding;
+            }
+        }
+
+        if (textWidth > 3 * ScreenHelper.getScreenPixels(activity).widthPixels / 4) {
+            textWidth = 3 * ScreenHelper.getScreenPixels(activity).widthPixels / 4;
+        }
+        return textWidth;
+    }
+
     @Override
     protected View initContentView() {
         if (items.size() == 0) {
@@ -51,6 +75,12 @@ public class SinglePicker extends WheelPicker {
         rootView.setOrientation(LinearLayout.HORIZONTAL);
         rootView.setGravity(Gravity.CENTER);
 
+        /** 左边LayoutParams **/
+        LinearLayout layout_1 = new LinearLayout(activity);
+        LinearLayout.LayoutParams params_1 = new LinearLayout.LayoutParams(getViewWidth(), WRAP_CONTENT);
+        layout_1.setLayoutParams(params_1);
+        layout_1.setGravity(Gravity.CENTER);
+
         WheelView wv = new WheelView(activity);
         wv.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         wv.setTextSize(textNormalSize, textSelectSize);
@@ -58,17 +88,20 @@ public class SinglePicker extends WheelPicker {
         wv.setOffSet(offSet);
         wv.setMaskColor(maskColor);
         wv.setMaskVisible(isMaskVisible);
-        rootView.addView(wv);
+        layout_1.addView(wv);
+        rootView.addView(layout_1);
 
+        TextView tv = new TextView(activity);
+        tv.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+        tv.setTextColor(labelColor);
+        tv.setTextSize(labelSize);
+        tv.setText(label);
         if (!TextUtils.isEmpty(label)) {
-            TextView tv = new TextView(activity);
-            tv.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-            tv.setTextColor(textLabelColor);
-            tv.setTextSize(textLabelSize);
-            tv.setPadding(20, 0, 0, 0);
-            rootView.addView(tv);
-            tv.setText(label);
+            tv.setPadding(labelPadding, 0, 0, 0);
         }
+        rootView.addView(tv);
+
+
         if (!TextUtils.isEmpty(selectedText)) {
             wv.setItemList(items, selectedText);
         } else {
@@ -91,14 +124,14 @@ public class SinglePicker extends WheelPicker {
             @Override
             public void onConfirm() {
                 if (onSinglePickListener != null) {
-                    onSinglePickListener.onSinglePick(selectedText);
+                    onSinglePickListener.onSelected(selectedText);
                 }
             }
         });
     }
 
     public interface OnSinglePickListener {
-        void onSinglePick(String text);
+        void onSelected(String text);
     }
 
     public void setSelectedIndex(int index) {
@@ -124,13 +157,5 @@ public class SinglePicker extends WheelPicker {
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    public void setTextLabelColor(int textLabelColor) {
-        this.textLabelColor = textLabelColor;
-    }
-
-    public void setTextLabelSize(int textLabelSize) {
-        this.textLabelSize = textLabelSize;
     }
 }

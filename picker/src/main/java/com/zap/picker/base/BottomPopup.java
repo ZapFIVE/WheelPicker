@@ -1,9 +1,11 @@
-package com.zap.picker;
+package com.zap.picker.base;
 
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.zap.picker.utils.ScreenHelper;
 
 /**
  * BottomPopup底部弹出窗口基类
