@@ -12,3 +12,8 @@
 
 Demo截图：
 ![image](https://github.com/ZapFIVE/WheelPicker/blob/master/screenshot/device-2016-10-21-165615.png)
+
+如果有不同看法和建议，请直接Pull。
+Email：zwfive69@gmail.com
+
+荆轲刺秦王！
