@@ -163,34 +163,37 @@ public class DoublePicker extends WheelPicker {
         this.secondLabel = secondLabel;
     }
 
+    public void setRelevanceType(RelevanceType relevanceType) {
+        this.relevanceType = relevanceType;
+    }
+
+    /**
+     * 设定选中文本（一定要在setItems或setListAndRelevanceRule之后执行）
+     */
     public void setSecletedItem(String firstValue, String secondValue) {
         this.firstSelectValue = firstValue;
         this.secondSelectValue = secondValue;
     }
 
-    public void setItemList(List<String> firstList, List<String> secondList) {
+    public void setItems(List<String> firstList, List<String> secondList) {
+        firstSelectValue = firstList.get(0);
+        secondSelectValue = secondList.get(0);
         this.firstList = firstList;
         this.secondList = secondList;
-    }
-
-    public void setFirstItemList(List<String> firstList) {
-        this.firstList = firstList;
     }
 
     public void setOnDoublePickListener(OnDoublePickListener listener) {
         this.onDoublePickListener = listener;
     }
 
-    public void setSupportRelevance(boolean isSupportRelevance) {
-        this.isSupportRelevance = isSupportRelevance;
-    }
-
-    public void setRelevanceRule(SparseArray<List<String>> rules) {
+    /**
+     * 设定第一项List和关联规则（默认设定联动为true）
+     */
+    public void setListAndRelevanceRule(List<String> firstList, SparseArray<List<String>> rules) {
+        isSupportRelevance = true;
         this.relevanceRule = rules;
-    }
 
-    public void setRelevanceType(RelevanceType relevanceType) {
-        this.relevanceType = relevanceType;
+        setItems(firstList, rules.get(0));
     }
 
     public interface OnDoublePickListener {

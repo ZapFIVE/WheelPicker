@@ -130,10 +130,6 @@ public class SinglePicker extends WheelPicker {
         });
     }
 
-    public interface OnSinglePickListener {
-        void onSelected(String text);
-    }
-
     public void setSelectedIndex(int index) {
         for (int i = 0; i < items.size(); i++) {
             if (index == i) {
@@ -147,15 +143,19 @@ public class SinglePicker extends WheelPicker {
         this.selectedText = selectedText;
     }
 
-    public void setOnSinglePickListener(OnSinglePickListener onSinglePickListener) {
-        this.onSinglePickListener = onSinglePickListener;
-    }
-
     public String getLabel() {
         return label;
     }
 
+    public void setOnSinglePickListener(OnSinglePickListener onSinglePickListener) {
+        this.onSinglePickListener = onSinglePickListener;
+    }
+
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public interface OnSinglePickListener {
+        void onSelected(String text);
     }
 }

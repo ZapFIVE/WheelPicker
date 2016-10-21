@@ -37,6 +37,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <com.zap.picker.SingleLayout
@@ -64,7 +65,7 @@
                     android:id="@+id/tv_result_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="00时00分"
+                    android:text="00 : 00"
                     android:textColor="@android:color/black"
                     android:textSize="20sp" />
 

@@ -1,5 +1,6 @@
 package com.zap.wheelpicker.demo;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +16,6 @@ import com.zap.picker.SingleLayout;
 import com.zap.picker.SinglePicker;
 import com.zap.picker.ThreeLayout;
 import com.zap.picker.ThreePicker;
-import com.zap.picker.utils.RelevanceType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         doubleLayout.setOnDoubleLayoutListener(new DoubleLayout.OnDoubleLayoutListener() {
             @Override
             public void onSelected(String firstSelectValue, String secondFirstValue) {
-                tv_result_2.setText(firstSelectValue + "--" + secondFirstValue);
+                tv_result_2.setText(firstSelectValue + " : " + secondFirstValue);
             }
         });
 
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         threeLayout.setOnThreeLayoutListener(new ThreeLayout.OnThreeLayoutListener() {
             @Override
             public void onSelected(String firstSelectValue, String secondFirstValue, String threeSelectValue) {
-                tv_result_3.setText(firstSelectValue + "--" + secondFirstValue + "--" + threeSelectValue);
+                tv_result_3.setText(firstSelectValue + " 时 " + secondFirstValue + " 分 " + threeSelectValue + " 秒 ");
             }
         });
 
@@ -131,10 +131,7 @@ public class MainActivity extends AppCompatActivity {
         doublePicker.setLabel("时", "分");
         doublePicker.setMaskVisible(false);
         doublePicker.setTextSize(20, 30);
-        doublePicker.setFirstItemList(createList(30));
-        doublePicker.setSupportRelevance(true);
-        doublePicker.setRelevanceType(RelevanceType.STAY_IN_PLACE);
-        doublePicker.setRelevanceRule(createRule());
+        doublePicker.setListAndRelevanceRule(createList(30), createRule());
         doublePicker.setOnDoublePickListener(new DoublePicker.OnDoublePickListener() {
             @Override
             public void onSelected(String firstSelectValue, String secondSelectValue) {
@@ -150,13 +147,17 @@ public class MainActivity extends AppCompatActivity {
         threePicker.setLabel("时", "分", "秒");
         threePicker.setMaskVisible(false);
         threePicker.setTextSize(20, 30);
-        threePicker.setFirstList(createList(30));
-        threePicker.setSupportRelevance(true);
-        threePicker.setRelevanceRule(createRule(), createRule());
+        threePicker.setListAndRelevanceRule(createList(30), createRule(), createRule());
+        threePicker.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                Toast.makeText(MainActivity.this, "dialog dismiss", Toast.LENGTH_SHORT).show();
+            }
+        });
         threePicker.setOnThreePickListener(new ThreePicker.OnThreePickListener() {
             @Override
             public void onSelected(String firstSelectValue, String secondSelectValue, String threeSelectValue) {
-                Toast.makeText(MainActivity.this, firstSelectValue + "时" + secondSelectValue + "分" + threeSelectValue + "秒", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, firstSelectValue + " 时 " + secondSelectValue + " 分 " + threeSelectValue + " 秒 ", Toast.LENGTH_SHORT).show();
             }
         });
         threePicker.show();

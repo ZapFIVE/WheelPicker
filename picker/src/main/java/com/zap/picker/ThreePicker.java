@@ -207,54 +207,42 @@ public class ThreePicker extends WheelPicker {
         this.threeLabel = threeLabel;
     }
 
+    public void setRelevanceType(RelevanceType relevanceType) {
+        this.relevanceType = relevanceType;
+    }
+
+    /**
+     * 设定选中文本（一定要在setItems或setListAndRelevanceRule之后执行）
+     */
     public void setSecletedItem(String firstValue, String secondValue, String threeValue) {
         this.firstSelectValue = firstValue;
         this.secondSelectValue = secondValue;
         this.threeSelectValue = threeValue;
     }
 
-    public void setItemList(List<String> firstList, List<String> secondList, List<String> threeList) {
+    public void setItems(List<String> firstList, List<String> secondList, List<String> threeList) {
+        firstSelectValue = firstList.get(0);
+        secondSelectValue = secondList.get(0);
+        threeSelectValue = threeList.get(0);
         this.firstList = firstList;
         this.secondList = secondList;
         this.threeList = threeList;
     }
 
-    public void setFirstList(List<String> firstList) {
-        this.firstList = firstList;
-    }
-
-    public void setSupportRelevance(boolean isSupportRelevance) {
-        this.oneSupportRelevance = isSupportRelevance;
-        this.twoSupportRelevance = isSupportRelevance;
-    }
-
-    public void setRelevanceRule(SparseArray<List<String>> oneRelevanceRule, SparseArray<List<String>> twoRelevanceRule) {
+    /**
+     * 设定第一项List和关联规则（默认设定联动为true）
+     */
+    public void setListAndRelevanceRule(List<String> firstList, SparseArray<List<String>> oneRelevanceRule, SparseArray<List<String>> twoRelevanceRule) {
+        oneSupportRelevance = true;
+        twoSupportRelevance = true;
         this.oneRelevanceRule = oneRelevanceRule;
         this.twoRelevanceRule = twoRelevanceRule;
+
+        setItems(firstList, oneRelevanceRule.get(0), twoRelevanceRule.get(0));
     }
 
     public void setOnThreePickListener(OnThreePickListener onThreePickListener) {
         this.onThreePickListener = onThreePickListener;
-    }
-
-    public void setOneSupportRelevance(boolean oneSupportRelevance) {
-        this.oneSupportRelevance = oneSupportRelevance;
-    }
-
-    public void setTwoSupportRelevance(boolean twoSupportRelevance) {
-        this.twoSupportRelevance = twoSupportRelevance;
-    }
-
-    public void setOneRelevanceRule(SparseArray<List<String>> oneRelevanceRule) {
-        this.oneRelevanceRule = oneRelevanceRule;
-    }
-
-    public void setTwoRelevanceRule(SparseArray<List<String>> twoRelevanceRule) {
-        this.twoRelevanceRule = twoRelevanceRule;
-    }
-
-    public void setRelevanceType(RelevanceType relevanceType) {
-        this.relevanceType = relevanceType;
     }
 
     public interface OnThreePickListener {
