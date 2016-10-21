@@ -11,3 +11,4 @@
 弹窗式和布局式，支持自定义Label，自定义顶部背景，容器背景，支持自定义文字颜色，字体大小，支持设定遮罩
 
 Demo截图：
+![image](https://github.com/ZapFIVE/WheelPicker/screenshots/device-2016-10-21-165615.png)
